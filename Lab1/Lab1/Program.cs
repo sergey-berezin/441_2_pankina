@@ -29,7 +29,7 @@ double[,] distances_1 =
     {7, 3, 4, 9, 12, 0 },
 };
 
-Population myPopulation = new Population(POPULATION_SIZE, distances);
+Population myPopulation = new Population(POPULATION_SIZE, distances_1);
 
 
 //Console.CancelKeyPress += (sender, args) =>
@@ -65,5 +65,5 @@ while (true)
     cki = Console.ReadKey(true);
     if (cki.Key == ConsoleKey.Spacebar) break;
 
-    myPopulation.evolution(distances);
+    myPopulation.evolution(distances_1);
 }
