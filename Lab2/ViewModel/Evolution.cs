@@ -3,12 +3,17 @@ using OxyPlot;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace ViewModel
 {
     public class Evolution: INotifyPropertyChanged
     {
+        private readonly ICityMapRenderer cityMapRenderer;
+
         public int citiesCount { get; set; } = 10;
 
         public int maxDistance { get; set; } = 100;
@@ -38,8 +43,9 @@ namespace ViewModel
         public ICommand evolutionCommand { get; private set; }
 
 
-        public Evolution()
+        public Evolution(ICityMapRenderer cityMapRenderer)
         {
+            this.cityMapRenderer = cityMapRenderer;
             createDistancesCommand = new Commands(o => { createRandomDistances_Execute(); });
             createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => createPopulation_CanExecute());
             evolutionCommand = new Commands(o => { evolution_Execute(); }, o => evolution_CanExecute());
@@ -81,6 +87,7 @@ namespace ViewModel
             RaisePropertyChanged("meanDistance");
             drawDistanceScorer();
             RaisePropertyChanged("plotModel");
+            drawBestRoute();
         }
 
         void evolution()
@@ -152,6 +159,20 @@ namespace ViewModel
                 this.plotModel = oxyPlotModel.plotModel;
             }
             catch(Exception ex)
+            {
+                MessageBox.Show($"Ошибка в построении графика:\n" + ex.Message);
+            }
+        }
+
+        private void drawBestRoute()
+        {
+            try
+            {
+                List<int> bestRoute = population.getBestRoutes()[0].route;
+                cityMapRenderer.RenderRoads(citiesCount, bestRoute, distances);
+                cityMapRenderer.RenderCities(citiesCount, bestRoute);
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка в построении графика:\n" + ex.Message);
             }

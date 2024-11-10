@@ -6,7 +6,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="1000">
     <Grid>
 
         <Grid Margin="10">
@@ -89,6 +89,12 @@
             <Grid Grid.Row="0" Grid.Column="1" Name="OxyPlot" Margin="10">
                 <oxy:PlotView Model="{Binding Path=plotModel}"/>
             </Grid>
+
+
+            <Grid Grid.Row="1" Grid.Column="1" Margin="10">
+                <Canvas HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="graphCanvas" Background="White"/>
+            </Grid>
+
 
 
 
