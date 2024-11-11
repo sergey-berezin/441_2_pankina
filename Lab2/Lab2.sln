@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{CF37285D-CBAC-418A-B58E-26A6F501E930}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "ViewModel\ViewModel.csproj", "{D3FB19C2-53A6-48FA-BD34-49340066C970}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp", "WpfApp\WpfApp.csproj", "{36169656-1925-487E-A27B-31641BBCF7E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF37285D-CBAC-418A-B58E-26A6F501E930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF37285D-CBAC-418A-B58E-26A6F501E930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF37285D-CBAC-418A-B58E-26A6F501E930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF37285D-CBAC-418A-B58E-26A6F501E930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3FB19C2-53A6-48FA-BD34-49340066C970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3FB19C2-53A6-48FA-BD34-49340066C970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3FB19C2-53A6-48FA-BD34-49340066C970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3FB19C2-53A6-48FA-BD34-49340066C970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36169656-1925-487E-A27B-31641BBCF7E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36169656-1925-487E-A27B-31641BBCF7E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36169656-1925-487E-A27B-31641BBCF7E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36169656-1925-487E-A27B-31641BBCF7E4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D30C76F-B8CD-438E-A9A9-539322E566A8}
+	EndGlobalSection
+EndGlobal

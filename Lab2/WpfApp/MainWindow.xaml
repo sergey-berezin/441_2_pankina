@@ -1,0 +1,109 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1000">
+    <Grid>
+
+        <Grid Margin="10">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.5*"/>
+                <!--<ColumnDefinition Width="1.5*"/>-->
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <!--<RowDefinition Height="1*"/>-->
+                <!--<RowDefinition Height="1*"/>-->
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="0" Grid.Row="0">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" VerticalAlignment="Center">
+                    <Label Content="Введите количество городов:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding Path=citiesCount}"></TextBox>
+                    <Label Content="Введите максимальное расстояние между городами:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding Path=maxDistance}"></TextBox>
+                </StackPanel>
+
+                <Button Grid.Row="1" Content="Сгенерировать матрицу расстояний" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding createDistancesCommand}" CommandParameter="From Button"/>
+
+                <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                    <Label Content="Введите размер популяции:" HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding Path=populationSize}"></TextBox>
+                </StackPanel>
+
+                <Button Grid.Row="3" Content="Создать начальную популяцию" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding createPopulationCommand}" CommandParameter="From Button"/>
+
+            </Grid>
+
+            <Grid Grid.Column="0" Grid.Row="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Номер поколения:"/>
+                        <TextBlock VerticalAlignment="center" Text="{Binding Path=generationsCounter}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Длина лучшего маршрута:"/>
+                        <TextBlock VerticalAlignment="center" Text="{Binding Path=bestDistance}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Средняя длина маршрута:"/>
+                        <TextBlock VerticalAlignment="center" Text="{Binding Path=meanDistance}"/>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <Button Grid.Row="1" Content="Начать процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding startEvolutionCommand}" CommandParameter="From Button"/>
+
+                <Button Grid.Row="2" Content="Завершить процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding finishEvolutionCommand}" CommandParameter="From Button"/>
+
+            </Grid>
+
+            <!--<oxy:PlotView Grid.Row="0" Grid.Column="1" Model="{Binding Path=plotModel}"/>-->
+
+            <Grid Grid.Row="0" Grid.Column="1" Name="OxyPlot" Margin="10">
+                <oxy:PlotView Model="{Binding Path=plotModel}"/>
+            </Grid>
+
+
+            <Grid Grid.Row="1" Grid.Column="1" Margin="10">
+                <Canvas HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="graphCanvas" Background="White"/>
+            </Grid>
+
+
+
+
+        </Grid>
+
+    </Grid>
+</Window>
+
