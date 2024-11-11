@@ -14,6 +14,8 @@ namespace ViewModel
     {
         private readonly ICityMapRenderer cityMapRenderer;
 
+        private CancellationTokenSource tokenSource;
+
         public int citiesCount { get; set; } = 10;
 
         public int maxDistance { get; set; } = 100;
@@ -34,6 +36,8 @@ namespace ViewModel
 
         public List<double> meanDistanceScorer { get; set; }
 
+        public bool evolutionFlag { get; set; } = true;
+
         public PlotModel? plotModel { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -41,14 +45,19 @@ namespace ViewModel
         public ICommand createDistancesCommand { get; private set; }
         public ICommand createPopulationCommand { get; private set; }
         public ICommand evolutionCommand { get; private set; }
+        public ICommand startEvolutionCommand { get; private set; }
+        public ICommand finishEvolutionCommand { get; private set; }
 
 
         public Evolution(ICityMapRenderer cityMapRenderer)
         {
             this.cityMapRenderer = cityMapRenderer;
+            this.tokenSource = new CancellationTokenSource();
             createDistancesCommand = new Commands(o => { createRandomDistances_Execute(); });
             createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => createPopulation_CanExecute());
             evolutionCommand = new Commands(o => { evolution_Execute(); }, o => evolution_CanExecute());
+            startEvolutionCommand = new AsyncCommands(async o => { await startEvolution_Execute(); }, o => evolution_CanExecute());
+            finishEvolutionCommand = new Commands(o => { finishEvolution_Execute(); }, o => finishEvolution_CanExecute());
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -79,7 +88,24 @@ namespace ViewModel
             return distances != null && population != null;
         }
 
-        void evolution_Execute()
+        async Task startEvolution_Execute()
+        {
+            CancellationToken token = tokenSource.Token;
+            await Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
+                    await evolution_Execute();
+                    Thread.Sleep(1000);
+                }
+            }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        async Task evolution_Execute()
         {
             evolution();
             RaisePropertyChanged("generationsCounter");
@@ -87,7 +113,19 @@ namespace ViewModel
             RaisePropertyChanged("meanDistance");
             drawDistanceScorer();
             RaisePropertyChanged("plotModel");
-            drawBestRoute();
+            await drawBestRoute();
+        }
+
+        bool finishEvolution_CanExecute()
+        {
+            return distances != null && population != null;
+        }
+
+        void finishEvolution_Execute()
+        {
+            tokenSource.Cancel();
+            tokenSource = new CancellationTokenSource();
+            //drawBestRoute();
         }
 
         void evolution()
@@ -164,18 +202,18 @@ namespace ViewModel
             }
         }
 
-        private void drawBestRoute()
+        private async Task drawBestRoute()
         {
-            try
-            {
-                List<int> bestRoute = population.getBestRoutes()[0].route;
-                cityMapRenderer.RenderRoads(citiesCount, bestRoute, distances);
-                cityMapRenderer.RenderCities(citiesCount, bestRoute);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка в построении графика:\n" + ex.Message);
-            }
+            //try
+            //{
+            List<int> bestRoute = population.getBestRoutes()[0].route;
+            await cityMapRenderer.RenderRoads(citiesCount, bestRoute, distances);
+            await cityMapRenderer.RenderCities(citiesCount, bestRoute);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Ошибка в построении графика:\n" + ex.Message);
+            //}
         }
 
     }

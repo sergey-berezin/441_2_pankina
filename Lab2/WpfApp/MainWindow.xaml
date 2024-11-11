@@ -58,6 +58,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -79,8 +80,11 @@
 
                 </StackPanel>
 
-                <Button Grid.Row="1" Content="Запустить процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Command="{Binding evolutionCommand}" CommandParameter="From Button"/>
+                <Button Grid.Row="1" Content="Начать процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding startEvolutionCommand}" CommandParameter="From Button"/>
+
+                <Button Grid.Row="2" Content="Завершить процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding finishEvolutionCommand}" CommandParameter="From Button"/>
 
             </Grid>
 

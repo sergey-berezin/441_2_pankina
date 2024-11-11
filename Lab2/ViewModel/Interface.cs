@@ -9,7 +9,7 @@ namespace ViewModel
 {
     public interface ICityMapRenderer
     {
-        void RenderCities(int citiesCount, List<int> route);
-        void RenderRoads(int citiesCount, List<int> route, int[,] distances);
+        Task RenderCities(int citiesCount, List<int> route);
+        Task RenderRoads(int citiesCount, List<int> route, int[,] distances);
     }
 }
