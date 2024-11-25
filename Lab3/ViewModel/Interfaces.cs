@@ -16,4 +16,9 @@ namespace ViewModel
         Task RenderCities(int citiesCount, List<int> route);
         Task RenderRoads(int citiesCount, List<int> route, int[,] distances);
     }
+
+    public interface IWindowDialog
+    {
+        void SaveExperiment();
+    }
 }

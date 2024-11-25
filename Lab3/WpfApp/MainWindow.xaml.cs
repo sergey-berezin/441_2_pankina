@@ -28,8 +28,27 @@ namespace WpfApp
         {
 
             InitializeComponent();
-            this.DataContext = new Evolution(new CanvasRoute(graphCanvas));
-        }  
+            this.DataContext = new Evolution(new CanvasRoute(graphCanvas), new SaveExperimentDialog());
+        }
+
+
+        public class SaveExperimentDialog: IWindowDialog
+        {
+            public void SaveExperiment()
+            {
+                SaveExperimentDialogWindow newWindow = new SaveExperimentDialogWindow();
+
+                if (newWindow.ShowDialog() == true)
+                {
+                    MessageBox.Show("Эксперимент сохранен");
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка");
+                }
+            }
+        }
+
 
         public class CanvasRoute: ICityMapRenderer
         {

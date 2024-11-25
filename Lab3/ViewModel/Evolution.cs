@@ -17,6 +17,8 @@ namespace ViewModel
     {
         private readonly ICityMapRenderer cityMapRenderer;
 
+        private readonly IWindowDialog windowDialog;
+
         private CancellationTokenSource tokenSource;
 
         public int citiesCount { get; set; } = 10;
@@ -54,9 +56,10 @@ namespace ViewModel
         public ICommand loadPopulationCommand { get; private set; }
 
 
-        public Evolution(ICityMapRenderer cityMapRenderer)
+        public Evolution(ICityMapRenderer cityMapRenderer, IWindowDialog windowDialog)
         {
             this.cityMapRenderer = cityMapRenderer;
+            this.windowDialog = windowDialog;
             this.tokenSource = new CancellationTokenSource();
             createDistancesCommand = new Commands(o => { createRandomDistances_Execute(); });
             createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => createPopulation_CanExecute());
@@ -144,9 +147,12 @@ namespace ViewModel
 
         void saveEvolution_Execute()
         {
-            string populationJson = JsonConvert.SerializeObject(population);
-            string path = "C:\\Users\\simal\\Documents\\C#\\441_2_pankina\\Lab3\\test.json";
-            File.WriteAllText(path, populationJson);
+            //string populationJson = JsonConvert.SerializeObject(population);
+            //string path = "C:\\Users\\simal\\Documents\\C#\\441_2_pankina\\Lab3\\test.json";
+            //File.WriteAllText(path, populationJson);
+            //PasswordWindow passwordWindow = new PasswordWindow();
+
+            windowDialog.SaveExperiment();
         }
 
         void loadPopulation_Execute()
