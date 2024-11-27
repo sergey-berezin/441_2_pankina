@@ -27,43 +27,46 @@
             <Grid Grid.Column="0" Grid.Row="0">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="4*"/>
+                    <!--<RowDefinition Height="1*"/>-->
+                    <RowDefinition Height="3*"/>
                     <RowDefinition Height="1*"/>
-                    <RowDefinition Height="2*"/>
+                    <!--<RowDefinition Height="2*"/>-->
+                    <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" VerticalAlignment="Center">
                     <Label Content="Введите количество городов:" HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding Path=citiesCount}"></TextBox>
-                    <Label Content="Введите максимальное расстояние между городами:" HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding Path=maxDistance}"></TextBox>
-                </StackPanel>
-
-                <Button Grid.Row="1" Content="Сгенерировать матрицу расстояний" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Command="{Binding createDistancesCommand}" CommandParameter="From Button"/>
-
-                <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                    <TextBox Text="{Binding Path=citiesCount}" MaxWidth="200" HorizontalContentAlignment="Center"></TextBox>
                     <Label Content="Введите размер популяции:" HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding Path=populationSize}"></TextBox>
+                    <TextBox Text="{Binding Path=populationSize}" MaxWidth="200" HorizontalContentAlignment="Center"></TextBox>
                 </StackPanel>
+                
 
-                <Button Grid.Row="3" Content="Создать начальную популяцию" VerticalAlignment="Center" HorizontalAlignment="Center"
+                <Button Grid.Row="1" Content="Сгенерировать матрицу расстояний и начальную популяцию" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Command="{Binding createPopulationCommand}" CommandParameter="From Button"/>
+
+                <Button Grid.Row="2" Content="Загрузить данные из файла" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding loadPopulationCommand}" CommandParameter="From Button"/>
 
             </Grid>
 
             <Grid Grid.Column="0" Grid.Row="1">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <Button Grid.Row="0" Content="Начать эволюцию" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding startEvolutionCommand}" CommandParameter="From Button"/>
+
+
+                <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
 
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Номер поколения:"/>
@@ -82,21 +85,27 @@
 
                 </StackPanel>
 
-                <Button Grid.Row="1" Content="Начать процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Command="{Binding startEvolutionCommand}" CommandParameter="From Button"/>
 
-                <Button Grid.Row="2" Content="Загрузить популяцию из файла" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Command="{Binding loadPopulationCommand}" CommandParameter="From Button"/>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    
+                    <Button Content="Остановить" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20 0"
+                        Command="{Binding stopEvolutionCommand}" CommandParameter="From Button"/>
 
-                <Button Grid.Row="3" Content="Завершить процесс эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Command="{Binding finishEvolutionCommand}" CommandParameter="From Button"/>
+                    <Button Content="Продолжить" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20 0"
+                        Command="{Binding evolutionCommand}" CommandParameter="From Button"/>
+                    
+                </StackPanel>
 
-                <Button Grid.Row="4" Content="Сохранить данные эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
+                <Button Grid.Row="3" Content="Сохранить данные эволюции" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Command="{Binding saveEvolutionCommand}" CommandParameter="From Button"/>
 
-            </Grid>
 
-            <!--<oxy:PlotView Grid.Row="0" Grid.Column="1" Model="{Binding Path=plotModel}"/>-->
+                <Button Grid.Row="4" Content="Завершить эволюцию" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding finishEvolutionCommand}" CommandParameter="From Button"/>
+
+
+            </Grid>
+            
 
             <Grid Grid.Row="0" Grid.Column="1" Name="OxyPlot" Margin="10">
                 <oxy:PlotView Model="{Binding Path=plotModel}"/>

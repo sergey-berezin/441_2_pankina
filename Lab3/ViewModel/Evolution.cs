@@ -10,6 +10,7 @@ using System.Windows.Shapes;
 using Newtonsoft.Json;
 using System.IO;
 using System.Numerics;
+using Newtonsoft.Json.Linq;
 
 namespace ViewModel
 {
@@ -22,8 +23,6 @@ namespace ViewModel
         private CancellationTokenSource tokenSource;
 
         public int citiesCount { get; set; } = 10;
-
-        public int maxDistance { get; set; } = 100;
 
         public int[,]? distances { get; set; }
 
@@ -45,15 +44,19 @@ namespace ViewModel
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ICommand createDistancesCommand { get; private set; }
         public ICommand createPopulationCommand { get; private set; }
-        public ICommand evolutionCommand { get; private set; }
+
+        public ICommand loadPopulationCommand { get; private set; }
+
         public ICommand startEvolutionCommand { get; private set; }
+
+        public ICommand evolutionCommand { get; private set; }
+
+        public ICommand stopEvolutionCommand { get; private set; }
+
         public ICommand finishEvolutionCommand { get; private set; }
 
         public ICommand saveEvolutionCommand { get; private set; }
-
-        public ICommand loadPopulationCommand { get; private set; }
 
 
         public Evolution(ICityMapRenderer cityMapRenderer, IWindowDialog windowDialog)
@@ -61,13 +64,15 @@ namespace ViewModel
             this.cityMapRenderer = cityMapRenderer;
             this.windowDialog = windowDialog;
             this.tokenSource = new CancellationTokenSource();
-            createDistancesCommand = new Commands(o => { createRandomDistances_Execute(); });
-            createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => createPopulation_CanExecute());
-            evolutionCommand = new Commands(o => { evolution_Execute(); }, o => evolution_CanExecute());
-            startEvolutionCommand = new AsyncCommands(async o => { await startEvolution_Execute(); }, o => evolution_CanExecute());
+            tokenSource.Cancel();
+
+            createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => newPopulation_CanExecute());
+            loadPopulationCommand = new Commands(o => { loadPopulation_Execute(); }, o => newPopulation_CanExecute());
+            startEvolutionCommand = new AsyncCommands(async o => { await evolution_Execute(); }, o => startEvolution_CanExecute());
+            evolutionCommand = new AsyncCommands(async o => { await evolution_Execute(); }, o => evolution_CanExecute());
+            stopEvolutionCommand = new Commands(o => { stopEvolution_Execute(); }, o => stopEvolution_CanExecute());
             finishEvolutionCommand = new Commands(o => { finishEvolution_Execute(); }, o => finishEvolution_CanExecute());
             saveEvolutionCommand = new Commands(o => { saveEvolution_Execute(); }, o => saveEvolution_CanExecute());
-            loadPopulationCommand = new Commands(o => { loadPopulation_Execute(); });
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -75,32 +80,57 @@ namespace ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        void createRandomDistances_Execute()
+        bool newPopulation_CanExecute()
         {
-            createRandomDistances();
-            //cityMapRenderer.createVertexPositions(citiesCount);
-        }
-
-        bool createPopulation_CanExecute()
-        {
-            return distances != null;
+            return distances == null && population == null ;
         }
 
         void createPopulation_Execute()
         {
+            createRandomDistances();
             createPopulation();
+            RaisePropertyChanged("citiesCount");
+            RaisePropertyChanged("populationSize");
             RaisePropertyChanged("generationsCounter");
             RaisePropertyChanged("bestDistance");
             RaisePropertyChanged("meanDistance");
         }
 
-        bool evolution_CanExecute()
+        void loadPopulation_Execute()
         {
-            //return distances != null && population != null;
-            return population != null;
+            string path = "C:\\Users\\simal\\Documents\\C#\\441_2_pankina\\Lab3\\test.json";
+            string populationJson = File.ReadAllText(path);
+            population = JsonConvert.DeserializeObject<Population>(populationJson);
+
+            citiesCount = population.citiesCount;
+            populationSize = population.populationSize;
+            generationsCounter = population.generationsCounter;
+            distances = population.distances;
+            bestDistance = population.getBestDistance();
+            meanDistance = population.getMeanDistance();
+            bestDistanceScorer = new List<double>();
+            meanDistanceScorer = new List<double>();
+            bestDistanceScorer.Add(bestDistance);
+            meanDistanceScorer.Add(meanDistance);
+
+            RaisePropertyChanged("citiesCount");
+            RaisePropertyChanged("populationSize");
+            RaisePropertyChanged("generationsCounter");
+            RaisePropertyChanged("bestDistance");
+            RaisePropertyChanged("meanDistance");
         }
 
-        async Task startEvolution_Execute()
+        bool startEvolution_CanExecute()
+        {
+            return distances != null && population != null && generationsCounter == 1;
+        }
+
+        bool evolution_CanExecute()
+        {
+            return distances != null && population != null && generationsCounter > 1 && tokenSource.Token.IsCancellationRequested;
+        }
+
+        async Task evolution_Execute()
         {
             tokenSource = new CancellationTokenSource();
             CancellationToken token = tokenSource.Token;
@@ -112,32 +142,38 @@ namespace ViewModel
                     {
                         break;
                     }
-                    await evolution_Execute();
-                    Thread.Sleep(1000);
+                    evolution();
+                    RaisePropertyChanged("generationsCounter");
+                    RaisePropertyChanged("bestDistance");
+                    RaisePropertyChanged("meanDistance");
+                    drawDistanceScorer();
+                    RaisePropertyChanged("plotModel");
+                    await drawBestRoute();
+                    Thread.Sleep(300);
                 }
             }, token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        async Task evolution_Execute()
+        bool stopEvolution_CanExecute()
         {
-            evolution();
-            RaisePropertyChanged("generationsCounter");
-            RaisePropertyChanged("bestDistance");
-            RaisePropertyChanged("meanDistance");
-            drawDistanceScorer();
-            RaisePropertyChanged("plotModel");
-            await drawBestRoute();
+            return distances != null && population != null && generationsCounter > 1 && !tokenSource.Token.IsCancellationRequested; ;
+        }
+
+        void stopEvolution_Execute()
+        {
+            tokenSource.Cancel();
         }
 
         bool finishEvolution_CanExecute()
         {
-            return distances != null && population != null;
+            return distances != null && population != null && tokenSource.Token.IsCancellationRequested;
         }
 
         void finishEvolution_Execute()
         {
             tokenSource.Cancel();
-            //tokenSource = new CancellationTokenSource();
+            distances = null;
+            population = null;
         }
 
         bool saveEvolution_CanExecute()
@@ -153,22 +189,6 @@ namespace ViewModel
             //PasswordWindow passwordWindow = new PasswordWindow();
 
             windowDialog.SaveExperiment();
-        }
-
-        void loadPopulation_Execute()
-        {
-            string path = "C:\\Users\\simal\\Documents\\C#\\441_2_pankina\\Lab3\\test.json";
-            string populationJson = File.ReadAllText(path);
-            population = JsonConvert.DeserializeObject<Population>(populationJson);
-            generationsCounter = population.generationsCounter;
-            distances = population.distances;
-            bestDistance = population.getBestDistance();
-            meanDistance = population.getMeanDistance();
-            bestDistanceScorer = new List<double>();
-            meanDistanceScorer = new List<double>();
-            RaisePropertyChanged("generationsCounter");
-            RaisePropertyChanged("bestDistance");
-            RaisePropertyChanged("meanDistance");
         }
 
         void evolution()
@@ -195,6 +215,8 @@ namespace ViewModel
 
         void createRandomDistances()
         {
+
+            int maxDistance = 100;
             int minDistance = maxDistance%2 == 0 ? maxDistance / 2: maxDistance / 2 + 1;
 
             Random random = new Random();
