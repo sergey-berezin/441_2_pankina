@@ -11,6 +11,9 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Numerics;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace ViewModel
 {
@@ -40,6 +43,19 @@ namespace ViewModel
 
         public List<double> meanDistanceScorer { get; set; }
 
+        public List<Run> runs { get; set; }
+
+        public List<string> runsExps
+        {
+            get
+            {
+                return runs.Select(x => x.experimentName).ToList();
+            }
+            set { }
+        }
+
+        public string expName { get; set; }
+
         public PlotModel? plotModel { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -65,6 +81,11 @@ namespace ViewModel
             this.windowDialog = windowDialog;
             this.tokenSource = new CancellationTokenSource();
             tokenSource.Cancel();
+
+            this.runs = new List<Run>();
+            string runsPath = "../../../../runs.json";
+            string runsJson = File.ReadAllText(runsPath);
+            this.runs = JsonConvert.DeserializeObject<List<Run>>(runsJson);
 
             createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => newPopulation_CanExecute());
             loadPopulationCommand = new Commands(o => { loadPopulation_Execute(); }, o => newPopulation_CanExecute());
@@ -98,7 +119,10 @@ namespace ViewModel
 
         void loadPopulation_Execute()
         {
-            string path = "C:\\Users\\simal\\Documents\\C#\\441_2_pankina\\Lab3\\test.json";
+
+            string fileName = runs.Find(x => x.experimentName == expName).fileName;
+            string path = $"../../../../Experiments/{fileName}";
+
             string populationJson = File.ReadAllText(path);
             population = JsonConvert.DeserializeObject<Population>(populationJson);
 
@@ -183,12 +207,43 @@ namespace ViewModel
 
         void saveEvolution_Execute()
         {
-            //string populationJson = JsonConvert.SerializeObject(population);
-            //string path = "C:\\Users\\simal\\Documents\\C#\\441_2_pankina\\Lab3\\test.json";
-            //File.WriteAllText(path, populationJson);
-            //PasswordWindow passwordWindow = new PasswordWindow();
 
-            windowDialog.SaveExperiment();
+            string runsPath = "../../../../runs.json";
+
+            string experimentName = windowDialog.openWindowDialog();
+
+            if (!File.Exists(runsPath))
+            {
+                File.Create(runsPath);
+                //File.WriteAllText("../../../../runs.json", "[]");
+            }
+
+            //if (experimentName == string.Empty)
+            //{
+
+            //}
+            //if (runsExps.Contains(experimentName))
+            //{
+
+            //}
+
+            string filename = DateTime.Now.ToString();
+            filename = filename.Replace(" ", "_").Replace(".", "_").Replace(":", "_"); ;
+            Run experiment = new Run(experimentName, $"{filename}.json");
+            runs.Add(experiment);
+
+            //runs = JsonConvert.DeserializeObject<List<Run>>(runsJson);
+
+            string runsJson = File.ReadAllText(runsPath);
+            runsJson = JsonConvert.SerializeObject(runs);
+            File.WriteAllText(runsPath, runsJson);
+
+            string expPath = $"../../../../Experiments/{filename}.json";
+            string populationJson = JsonConvert.SerializeObject(population);
+            File.WriteAllText(expPath, populationJson);
+
+            RaisePropertyChanged("runsExps");
+
         }
 
         void evolution()

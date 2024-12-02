@@ -19,6 +19,6 @@ namespace ViewModel
 
     public interface IWindowDialog
     {
-        void SaveExperiment();
+        string openWindowDialog();
     }
 }

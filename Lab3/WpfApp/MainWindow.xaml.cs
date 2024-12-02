@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ClassLibrary;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -16,6 +18,9 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using ViewModel;
 using static System.Net.Mime.MediaTypeNames;
+using System.IO;
+using static WpfApp.MainWindow;
+using System.Xml.Linq;
 
 namespace WpfApp
 {
@@ -34,17 +39,19 @@ namespace WpfApp
 
         public class SaveExperimentDialog: IWindowDialog
         {
-            public void SaveExperiment()
+            public string openWindowDialog()
             {
-                SaveExperimentDialogWindow newWindow = new SaveExperimentDialogWindow();
 
-                if (newWindow.ShowDialog() == true)
+                SaveExperimentDialogWindow dialogWindow = new SaveExperimentDialogWindow();
+
+                if (dialogWindow.ShowDialog() == true)
                 {
-                    MessageBox.Show("Эксперимент сохранен");
+                    return dialogWindow.expеrimentName;
                 }
                 else
                 {
-                    MessageBox.Show("Ошибка");
+                    MessageBox.Show("Эксперимент не сохранен");
+                    return string.Empty;
                 }
             }
         }

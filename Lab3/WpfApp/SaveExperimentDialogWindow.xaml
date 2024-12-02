@@ -15,12 +15,12 @@
 
         <StackPanel Grid.Row="0" VerticalAlignment="Center">
             <Label Content="Введите название экспермента:" HorizontalAlignment="Center"/>
-            <TextBox Text="{Binding Path=citiesCount}" Margin="50 0"></TextBox>
+            <TextBox Name="ExpNameTextBox" Text="{Binding ElementName=SaveExperimentDialogWindow, Path=expеrimentName}" Margin="50 0"></TextBox>
         </StackPanel>
-
+ 
         <StackPanel Grid.Row="1" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button IsDefault="True" Click="Accept_Click" MinWidth="75" Margin="0,0,10,0">Сохранить</Button>
-            <Button IsCancel="True" MinWidth="60">Отмена</Button>
+            <Button Content="Сохранить" MinWidth="75" Margin="0,0,10,0" Click="Save_Click"/>
+            <Button Content="Отмена" MinWidth="60" Click="Cancel_Click"/>
         </StackPanel>
 
     </Grid>

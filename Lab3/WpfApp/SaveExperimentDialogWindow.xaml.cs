@@ -19,14 +19,24 @@ namespace WpfApp
     /// </summary>
     public partial class SaveExperimentDialogWindow : Window
     {
+        public string? expеrimentName { get; set; } = string.Empty;
+
         public SaveExperimentDialogWindow()
         {
             InitializeComponent();
         }
 
-        private void Accept_Click(object sender, RoutedEventArgs e)
+        private void Save_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
+            expеrimentName = ExpNameTextBox.Text;
+            //MessageBox.Show(expеrimentName);
         }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = false;
+        }
+
     }
 }

@@ -30,7 +30,7 @@
                     <!--<RowDefinition Height="1*"/>-->
                     <RowDefinition Height="3*"/>
                     <RowDefinition Height="1*"/>
-                    <!--<RowDefinition Height="2*"/>-->
+                    <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
@@ -46,7 +46,10 @@
                 <Button Grid.Row="1" Content="Сгенерировать матрицу расстояний и начальную популяцию" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Command="{Binding createPopulationCommand}" CommandParameter="From Button"/>
 
-                <Button Grid.Row="2" Content="Загрузить данные из файла" VerticalAlignment="Center" HorizontalAlignment="Center"
+                <ComboBox Grid.Row="2" Name="expComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="150"
+                          SelectedItem="{Binding Path=expName}" ItemsSource="{Binding runsExps}"/>
+
+                <Button Grid.Row="3" Content="Загрузить данные из файла" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Command="{Binding loadPopulationCommand}" CommandParameter="From Button"/>
 
             </Grid>
