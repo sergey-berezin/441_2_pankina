@@ -1,0 +1,27 @@
+﻿<Window x:Class="WpfApp.SaveExperimentDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d"
+        Title="Сохранение эксперимента" Height="150" Width="400">
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" VerticalAlignment="Center">
+            <Label Content="Введите название экспермента:" HorizontalAlignment="Center"/>
+            <TextBox Name="ExpNameTextBox" Text="{Binding ElementName=SaveExperimentDialogWindow, Path=expеrimentName}" Margin="50 0"></TextBox>
+        </StackPanel>
+ 
+        <StackPanel Grid.Row="1" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="Сохранить" MinWidth="75" Margin="0,0,10,0" Click="Save_Click"/>
+            <Button Content="Отмена" MinWidth="60" Click="Cancel_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
