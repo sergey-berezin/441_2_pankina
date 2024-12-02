@@ -21,4 +21,9 @@ namespace ViewModel
     {
         string openWindowDialog();
     }
+
+    public interface IErrorSender
+    {
+        void SendError(string message);
+    }
 }

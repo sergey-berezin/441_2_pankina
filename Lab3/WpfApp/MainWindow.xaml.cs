@@ -33,7 +33,7 @@ namespace WpfApp
         {
 
             InitializeComponent();
-            this.DataContext = new Evolution(new CanvasRoute(graphCanvas), new SaveExperimentDialog());
+            this.DataContext = new Evolution(new CanvasRoute(graphCanvas), new SaveExperimentDialog(), new MessageBoxErrorSender());
         }
 
 
@@ -51,9 +51,15 @@ namespace WpfApp
                 else
                 {
                     MessageBox.Show("Эксперимент не сохранен");
-                    return string.Empty;
+                    return null;
                 }
             }
+        }
+
+
+        public class MessageBoxErrorSender : IErrorSender
+        {
+            public void SendError(string message) => MessageBox.Show(message);
         }
 
 

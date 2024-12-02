@@ -23,6 +23,8 @@ namespace ViewModel
 
         private readonly IWindowDialog windowDialog;
 
+        private readonly IErrorSender errorSender;
+
         private CancellationTokenSource tokenSource;
 
         public int citiesCount { get; set; } = 10;
@@ -75,17 +77,28 @@ namespace ViewModel
         public ICommand saveEvolutionCommand { get; private set; }
 
 
-        public Evolution(ICityMapRenderer cityMapRenderer, IWindowDialog windowDialog)
+
+        public Evolution(ICityMapRenderer cityMapRenderer, IWindowDialog windowDialog, IErrorSender errorSender)
         {
             this.cityMapRenderer = cityMapRenderer;
             this.windowDialog = windowDialog;
+            this.errorSender = errorSender;
             this.tokenSource = new CancellationTokenSource();
             tokenSource.Cancel();
 
             this.runs = new List<Run>();
+
             string runsPath = "../../../../runs.json";
-            string runsJson = File.ReadAllText(runsPath);
-            this.runs = JsonConvert.DeserializeObject<List<Run>>(runsJson);
+            if (!File.Exists(runsPath))
+            {
+                File.Create(runsPath);
+            }
+            else
+            {
+                string runsJson = File.ReadAllText(runsPath);
+                this.runs = JsonConvert.DeserializeObject<List<Run>>(runsJson);
+            }
+
 
             createPopulationCommand = new Commands(o => { createPopulation_Execute(); }, o => newPopulation_CanExecute());
             loadPopulationCommand = new Commands(o => { loadPopulation_Execute(); }, o => newPopulation_CanExecute());
@@ -208,34 +221,34 @@ namespace ViewModel
         void saveEvolution_Execute()
         {
 
-            string runsPath = "../../../../runs.json";
-
             string experimentName = windowDialog.openWindowDialog();
 
-            if (!File.Exists(runsPath))
+            string runsPath = "../../../../runs.json";
+
+            if (experimentName == null)
             {
-                File.Create(runsPath);
-                //File.WriteAllText("../../../../runs.json", "[]");
+                return;
             }
 
-            //if (experimentName == string.Empty)
-            //{
+            if (experimentName == string.Empty)
+            {
+                errorSender.SendError("Не введено название эксперимента.\nДанные не сохранены.");
+                return;
+            }
 
-            //}
-            //if (runsExps.Contains(experimentName))
-            //{
-
-            //}
+            if (runsExps.Contains(experimentName))
+            {
+                errorSender.SendError("Эксперимент с таким названием уже существует.\nДанные не сохранены");
+                return;
+            }
 
             string filename = DateTime.Now.ToString();
             filename = filename.Replace(" ", "_").Replace(".", "_").Replace(":", "_"); ;
             Run experiment = new Run(experimentName, $"{filename}.json");
             runs.Add(experiment);
 
-            //runs = JsonConvert.DeserializeObject<List<Run>>(runsJson);
 
-            string runsJson = File.ReadAllText(runsPath);
-            runsJson = JsonConvert.SerializeObject(runs);
+            string runsJson = JsonConvert.SerializeObject(runs);
             File.WriteAllText(runsPath, runsJson);
 
             string expPath = $"../../../../Experiments/{filename}.json";
